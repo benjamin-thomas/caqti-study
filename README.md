@@ -58,3 +58,18 @@ We will also:
 - learn to use `caqti` with [async](https://github.com/janestreet/async)
 - learn to use `caqti` with [eio](https://github.com/ocaml-multicore/eio)
 - learn to use the satellite project [ppx_rapper](https://github.com/roddyyaga/ppx_rapper), which can be interesting from the perspective of reducing boilerplate
+
+## Prerequisites
+
+You must have a working installation of PostgreSQL.
+
+Also, you should install the following dependencies:
+
+```
+opam install caqti
+
+# Those are for testing
+opam install base
+opam install ppx_assert
+opam install ppx_inline_test
+```
