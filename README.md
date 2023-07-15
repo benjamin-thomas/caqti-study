@@ -9,11 +9,7 @@ This is currently work in progress.
 
 ## What we will be building
 
-We will learn to handle this mildly complex relation with `Caqti` and `PostgreSQL`:
-
-- an author can publish one or many books
-- a book can be written by one or many authors
-
+We will learn to handle this mildly complex relationship with `Caqti` and `PostgreSQL`:
 
 ```mermaid
 erDiagram
@@ -36,13 +32,18 @@ erDiagram
         int author_id FK
         int book_id FK
     }
-
 ```
+
+- an author can publish one or many books
+- a book can be written by one or many authors
+
+
+## General overview
 
 We will also:
 
 - interact with the system via the `utop` REPL
-- run a binary that will generate and display CRUD queries
+- run a binary that will call into a lib to generate (and display) CRUD queries
 - implement tests to ensure we always have a working system
 - explain general OCaml-specific concepts along the way
   - the goal is to give a friendly introduction to an OCaml beginner
