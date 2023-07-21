@@ -41,7 +41,6 @@ let () =
   | Error e -> err_log "%s" (Caqti_error.show e)
   | Ok bibliography ->
       let longest = longest_book_name bibliography in
-      ();
       info_log "Setup OK!";
       print_newline ();
       print_endline "Bibliography";

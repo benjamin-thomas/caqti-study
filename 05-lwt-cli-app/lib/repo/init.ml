@@ -115,8 +115,8 @@ let seed conn =
     let add_bibli = Bibliography.insert conn in
     let open Lwt_result.Syntax in
     (*
-          John Whitington
-        *)
+     * John Whitington
+     *)
     let* john_whitigton =
       add_author
         { first_name = "John"; middle_name = None; last_name = "Whitington" }
@@ -127,8 +127,8 @@ let seed conn =
     let* () = add_bibli { author_id = john_whitigton; book_id = more_ocaml } in
 
     (*
-          Graham Hutton
-        *)
+     * Graham Hutton
+     *)
     let* graham_hutton =
       add_author
         { first_name = "Graham"; middle_name = None; last_name = "Hutton" }
@@ -138,7 +138,9 @@ let seed conn =
       add_bibli { author_id = graham_hutton; book_id = prog_with_haskell }
     in
 
-    (* Anil Madhavapeddy and Yaron Minsky *)
+    (*
+     * Anil Madhavapeddy and Yaron Minsky
+     *)
     let* anil_madhavapeddy =
       add_author
         { first_name = "Anil"; middle_name = None; last_name = "Madhavapeddy" }
@@ -164,12 +166,3 @@ let seed_alt conn : (unit, 'error) result Lwt.t =
   let* () = add_author conn "Jane" "Doe" in
   let* () = add_author conn "Robert" "Doe" in
   Lwt.return_ok ()
-
-let seed5 conn : (unit, 'error) result Lwt.t =
-    let ( >>= ) = Lwt_result.bind in
-
-    Lwt.return_ok ()             >>= fun () ->
-    add_author conn "John" "Doe" >>= fun () ->
-    add_author conn "Jane" "Doe" >>= fun () ->
-    add_author conn "Robert" "Doe"
-  [@@ocamlformat "disable"]
