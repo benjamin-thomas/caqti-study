@@ -158,7 +158,7 @@ let seed conn =
 let add_author conn first_name last_name : (unit, 'error) result Lwt.t =
   Author.insert conn { first_name; middle_name = None; last_name }
 
-let seed2 conn : (unit, 'error) result Lwt.t =
+let seed_alt conn : (unit, 'error) result Lwt.t =
   let ( let* ) = Lwt_result.bind in
   let* () = add_author conn "John" "Doe" in
   let* () = add_author conn "Jane" "Doe" in
