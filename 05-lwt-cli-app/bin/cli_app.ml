@@ -46,11 +46,16 @@ let get_args () =
   print_header "author";
   match get_line () with None -> [] | Some str -> String.split_on_char ' ' str
 
+(** It is assumed these command won't fail at runtime, given the fact they've been tested.
+    Regardless, we probably don't want to print a specific error message in this context *)
+let run promise f =
+  match Lwt_main.run promise with
+  | Error _ -> print_endline "Sorry, something went wrong!"
+  | Ok x -> f x
+
 let print_authors conn =
   let print_author (id, last_name) = printf "%d) %s\n%!" id last_name in
-  match Lwt_main.run (Author.ls' conn) with
-  | Error _ -> print_endline "Sorry, something went wrong!"
-  | Ok authors -> List.iter print_author authors
+  run (Author.ls' conn) (List.iter print_author)
 
 let rec author_repl conn args =
   let repl_me = author_repl conn in
