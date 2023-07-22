@@ -84,20 +84,21 @@ end
 
 module Main_REPL = struct
   let rec run conn =
+    let eval_print_loop = function
+      | "quit" :: [] -> print_endline "Bye bye!"
+      | "help" :: [] ->
+          print_endline help;
+          run conn
+      | "author" :: args ->
+          Author_REPL.run conn args;
+          run conn
+      | _ ->
+          print_endline "Unknown command!";
+          run conn
+    in
     print_header "main";
     match get_line () with
-    | Some line -> (
-        match line |> String.split_on_char ' ' with
-        | "quit" :: [] -> print_endline "Bye bye!"
-        | "help" :: [] ->
-            print_endline help;
-            run conn
-        | "author" :: args ->
-            Author_REPL.run conn args;
-            run conn
-        | _ ->
-            print_endline "Unknown command!";
-            run conn)
+    | Some line -> eval_print_loop (String.split_on_char ' ' line)
     | None ->
         (* Ctrl+D *)
         print_newline ();
