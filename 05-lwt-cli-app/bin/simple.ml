@@ -1,7 +1,7 @@
 (*
   Run with:
 
-    make -C .. db-reset && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/main.exe
+    make -C .. db-reset && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/simple.exe
 *)
 
 module Init = Repo.Init
