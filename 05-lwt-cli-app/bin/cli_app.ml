@@ -1,12 +1,12 @@
 (*
   Run with:
-
     PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/cli_app.exe
+
+  NOTE:
+    Run the "simple" app first to seed the database
 *)
 
 open Printf
-module Init = Repo.Init
-module Author = Repo.Author
 
 let help =
   {|
@@ -21,7 +21,11 @@ let help =
     - quit
     - author ls
     - author find 1
-    - author insert
+    - author delete 1 : TODO
+    - author insert : TODO
+    - book ls
+    - book find 1
+    - book other TODO
 
   NOTE:
 
@@ -50,6 +54,8 @@ let run_promise p f =
   | Ok x -> f x
 
 module Author_REPL = struct
+  module Author = Repo.Author
+
   let print_author (id, first_name) = printf "%d) %s\n%!" id first_name
 
   let print_author_opt = function
@@ -82,6 +88,41 @@ module Author_REPL = struct
         again (get_args ())
 end
 
+module Book_REPL = struct
+  module Book = Repo.Book
+
+  let print_book (id, first_name) = printf "%d) %s\n%!" id first_name
+
+  let print_book_opt = function
+    | None -> print_endline "Book not found!"
+    | Some x -> print_book x
+
+  let get_args () =
+    print_header "book";
+    match get_line () with
+    | None -> []
+    | Some str -> String.split_on_char ' ' str
+
+  let rec run conn args =
+    let again = run conn in
+    match args with
+    | [] | "main" :: [] ->
+        (* Ctrl+D or typed "main" *)
+        print_newline ()
+    | "ls" :: [] ->
+        run_promise (Book.ls conn) @@ List.iter print_book;
+        again (get_args ())
+    | "insert" :: [] ->
+        print_endline "will start book insert mode";
+        again (get_args ())
+    | [ "find"; id ] ->
+        run_promise (Book.find_by_id conn id) print_book_opt;
+        again (get_args ())
+    | _ ->
+        print_endline "Unknown book command or sub-command!";
+        again (get_args ())
+end
+
 module Main_REPL = struct
   let rec run conn =
     let eval_print_loop = function
@@ -91,6 +132,9 @@ module Main_REPL = struct
           run conn
       | "author" :: args ->
           Author_REPL.run conn args;
+          run conn
+      | "book" :: args ->
+          Book_REPL.run conn args;
           run conn
       | _ ->
           print_endline "Unknown command!";
@@ -107,7 +151,7 @@ module Main_REPL = struct
 end
 
 let () =
-  match Lwt_main.run (Init.connect ()) with
+  match Lwt_main.run (Repo.Init.connect ()) with
   | Error err ->
       print_endline "Can't start the app! I could not connect to the database!!";
       prerr_endline (Caqti_error.show err)

@@ -14,6 +14,12 @@ module Q = struct
     SELECT COUNT(*) FROM book
     |}
 
+  let ls = Caqti_type.(unit ->* tup2 int string) {|SELECT id, title FROM book|}
+
+  let find_by_id =
+    Caqti_type.(string ->? tup2 int string)
+      {|SELECT id, title FROM book WHERE id = ?|}
+
   let insert =
     Caqti_type.(string ->. unit)
       {|
@@ -30,6 +36,10 @@ end
 type book = { title : string }
 
 let count (module Conn : Caqti_lwt.CONNECTION) = Conn.find Q.count ()
+let ls (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls ()
+
+let find_by_id (module Conn : Caqti_lwt.CONNECTION) id =
+  Conn.find_opt Q.find_by_id id
 
 let insert (module Conn : Caqti_lwt.CONNECTION) (b : book) =
   Conn.exec Q.insert b.title
