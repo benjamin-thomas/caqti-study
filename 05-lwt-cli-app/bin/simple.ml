@@ -34,7 +34,7 @@ let () =
     let* conn = Init.connect () in
     let* () = Init.create_tables conn in
     let* () = Init.seed conn in
-    Bibliography.ls conn ()
+    Bibliography.ls conn
   in
 
   match Lwt_main.run work with
