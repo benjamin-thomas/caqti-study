@@ -74,11 +74,11 @@ type author = {
   last_name : string;
 }
 
-(* FIXME: add full utop command
-   $ dune utop
+(*
+   $ PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune utop
    utop # open Repo;;
-   utop # let conn = Init.caqti_conn ();;
-   utop # Author.insert conn "Robert" "Doe" "robert@example.com";;
+   utop # let conn = Init.connect_exn ();;
+   utop # Author.insert conn { first_name = "John"; last_name = "Doe"; middle_name = None };;
 *)
 let insert (module Conn : Caqti_lwt.CONNECTION) (a : author) =
   Conn.exec Q.insert (a.first_name, a.middle_name, a.last_name)
@@ -89,18 +89,18 @@ let insert' (module Conn : Caqti_lwt.CONNECTION) (a : author) =
 let find_by_id (module Conn : Caqti_lwt.CONNECTION) id =
   Conn.find Q.find_by_id id
 
-let ls (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls
-let ls' (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls'
+let ls (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls ()
+let ls' (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls' ()
 
 let update (module Conn : Caqti_lwt.CONNECTION) id (a : author) =
   Conn.exec Q.update (id, a.first_name, a.last_name)
 
 let delete (module Conn : Caqti_lwt.CONNECTION) id = Conn.exec Q.delete id
 
-(* FIXME: add full utop command
-   $ dune utop
+(*
+   $ PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune utop
    utop # open Repo;;
-   utop # let conn = Init.caqti_conn ();;
-   utop # Customer.count conn ();;
+   utop # let conn = Init.connect_exn ();;
+   utop # Author.count conn;;
 *)
-let count (module Conn : Caqti_lwt.CONNECTION) = Conn.find Q.count
+let count (module Conn : Caqti_lwt.CONNECTION) = Conn.find Q.count ()

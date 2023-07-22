@@ -39,15 +39,19 @@ let will_get_author_v5 () : ('author, 'error) result Lwt.t =
 
 ```
 cd ./05-lwt-cli-app
-PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/main.exe
+PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/simple.exe
 PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune dune runtest --watch
 ```
 
+As before, we can fully interact with our app via the REPL
+
 ```
 $ cd ./05-lwt-cli-app
-$ make -C .. db-reset
-$ PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune utop
+$ make -C .. db-reset && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune utop
 utop # open Repo;;
 utop # let conn = Init.connect_exn ();;
 utop # Init.create_tables conn;;
+utop # Init.seed conn;;
+utop # Bibliography.ls conn ();;
+utop # Author.insert conn { first_name = "John"; last_name = "Doe"; middle_name = None };;
 ```

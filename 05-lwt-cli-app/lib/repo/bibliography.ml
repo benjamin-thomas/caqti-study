@@ -68,11 +68,11 @@ type bibliography = { author_id : int; book_id : int }
 let insert (module Conn : Caqti_lwt.CONNECTION) (b : bibliography) =
   Conn.exec Q.insert (b.author_id, b.book_id)
 
-(* FIXME: add full utop command
-   $ dune utop
+(*
+   $ PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune utop
    utop # open Repo;;
-   utop # let conn = Init.caqti_conn ();;
+   utop # let conn = Init.connect_exn ();;
    utop # Bibliography.ls conn ();;
 *)
-let ls (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls
-let ls' (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls'
+let ls (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls ()
+let ls' (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls' ()

@@ -14,7 +14,7 @@ let%test_unit "seed the database, then read many rows" =
     let open Lwt_result.Syntax in
     let* conn = Setup.fresh_db () in
     let* () = Repo.Init.seed conn in
-    let+ found = Bibliography.ls conn () in
+    let+ found = Bibliography.ls conn in
     (* Example showing how to go beyond tup4 (there is no tup5) *)
     List.map
       (fun (id, (title, (first_name, (_middle_name, last_name)))) ->
@@ -39,7 +39,7 @@ let%test_unit "seed the database, then read many rows (alt, simple)" =
     let open Lwt_result.Syntax in
     let* conn = Setup.fresh_db () in
     let* () = Repo.Init.seed_alt conn in
-    Repo.Author.ls' conn ()
+    Repo.Author.ls' conn
   in
 
   Lwt_main.run (str_error prom)

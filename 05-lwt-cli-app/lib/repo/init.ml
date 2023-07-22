@@ -98,10 +98,10 @@ let transact (module Conn : Caqti_lwt.CONNECTION) fn =
   let* () = Conn.commit () in
   Lwt.return_ok ()
 
-(* FIXME: add full utop command
-     $ dune utop
+(*
+     $ PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune utop
      utop # open Repo;;
-     utop # let conn = Init.caqti_conn ();;
+     utop # let conn = Init.connect_exn ();;
      utop # Init.create_tables conn;;
      utop # Init.seed conn;;
      utop # Bibliography.ls conn ();;

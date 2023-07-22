@@ -7,7 +7,7 @@ let%test_unit "count returns 0, when there are no rows" =
   let prom =
     let open Lwt_result.Syntax in
     let* conn = Setup.fresh_db () |> str_error in
-    Author.count conn () |> str_error
+    Author.count conn |> str_error
   in
 
   Lwt_main.run prom => Ok 0
@@ -22,7 +22,7 @@ let%test_unit "count returns 1, after inserting Jane" =
         { first_name = "Jane"; middle_name = None; last_name = "Doe" }
     in
 
-    Author.count conn ()
+    Author.count conn
   in
 
   Lwt_main.run (str_error prom) => Ok 1
@@ -54,6 +54,6 @@ let%test_unit "read many" =
       Author.insert conn
         { first_name = "Jane"; middle_name = None; last_name = "Doe" }
     in
-    Author.ls conn ()
+    Author.ls conn
   in
   Lwt_main.run (str_error prom) => Ok [ "John"; "Jane" ]
