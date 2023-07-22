@@ -25,9 +25,9 @@ module Q = struct
       |}
 
   let find_by_id =
-    Caqti_type.(int ->! string)
+    Caqti_type.(string ->? tup2 int string)
       {|
-       SELECT first_name
+       SELECT id, first_name
        FROM author
        WHERE id = ?
       |}
@@ -87,7 +87,7 @@ let insert' (module Conn : Caqti_lwt.CONNECTION) (a : author) =
   Conn.find Q.insert' (a.first_name, a.last_name)
 
 let find_by_id (module Conn : Caqti_lwt.CONNECTION) id =
-  Conn.find Q.find_by_id id
+  Conn.find_opt Q.find_by_id id
 
 let ls (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls ()
 let ls' (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls' ()

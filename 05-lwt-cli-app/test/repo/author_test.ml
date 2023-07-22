@@ -27,8 +27,23 @@ let%test_unit "count returns 1, after inserting Jane" =
 
   Lwt_main.run (str_error prom) => Ok 1
 
-let%test_unit "find_by_id, terser" =
-  let ( => ) = [%test_eq: (Base.string, Base.string) Base.Result.t] in
+let%test_unit "find_by_id: not found" =
+  let ( => ) =
+    [%test_eq:
+      ((Base.int * Base.string) Base.option, Base.string) Base.Result.t]
+  in
+  let prom =
+    let open Lwt_result.Syntax in
+    let* conn = Setup.fresh_db () in
+    Author.find_by_id conn "1"
+  in
+  Lwt_main.run (str_error prom) => Ok None
+
+let%test_unit "find_by_id: found" =
+  let ( => ) =
+    [%test_eq:
+      ((Base.int * Base.string) Base.option, Base.string) Base.Result.t]
+  in
   let prom =
     let open Lwt_result.Syntax in
     let* conn = Setup.fresh_db () in
@@ -36,9 +51,9 @@ let%test_unit "find_by_id, terser" =
       Author.insert conn
         { first_name = "John"; middle_name = None; last_name = "Doe" }
     in
-    Author.find_by_id conn 1
+    Author.find_by_id conn "1"
   in
-  Lwt_main.run (str_error prom) => Ok "John"
+  Lwt_main.run (str_error prom) => Ok (Some (1, "John"))
 
 let%test_unit "read many" =
   let ( => ) = [%test_eq: (Base.string Base.list, Base.string) Base.Result.t] in

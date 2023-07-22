@@ -53,28 +53,30 @@ let run promise f =
   | Error _ -> print_endline "Sorry, something went wrong!"
   | Ok x -> f x
 
-let print_authors conn =
-  let print_author (id, last_name) = printf "%d) %s\n%!" id last_name in
-  run (Author.ls' conn) (List.iter print_author)
+let print_author (id, first_name) = printf "%d) %s\n%!" id first_name
+
+let print_author_opt = function
+  | None -> print_endline "Author not found!"
+  | Some x -> print_author x
 
 let rec author_repl conn args =
-  let repl_me = author_repl conn in
+  let again = author_repl conn in
   match args with
   | [] | "main" :: [] ->
       (* Ctrl+D or typed "main" *)
       print_newline ()
   | "ls" :: [] ->
-      print_authors conn;
-      repl_me (get_args ())
+      run (Author.ls' conn) @@ List.iter print_author;
+      again (get_args ())
   | "insert" :: [] ->
       print_endline "will start author insert mode";
-      repl_me (get_args ())
+      again (get_args ())
   | [ "find"; id ] ->
-      printf "will search author: %s\n%!" id;
-      repl_me (get_args ())
+      run (Author.find_by_id conn id) print_author_opt;
+      again (get_args ())
   | _ ->
       print_endline "Unknown author command or sub-command!";
-      repl_me (get_args ())
+      again (get_args ())
 
 let rec main_repl conn =
   print_header "main";
@@ -99,9 +101,9 @@ let rec main_repl conn =
 
 let () =
   match Lwt_main.run (Init.connect ()) with
-  | Error x ->
+  | Error err ->
       print_endline "Can't start the app! I could not connect to the database!!";
-      prerr_endline (Caqti_error.show x)
+      prerr_endline (Caqti_error.show err)
   | Ok conn ->
       print_endline {|Welcome to our CLI app! (type "help" to learn more)|};
       main_repl conn
