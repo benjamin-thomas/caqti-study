@@ -30,7 +30,9 @@ let%test_unit "count returns 1, after inserting Jane" =
 let%test_unit "find_by_id: not found" =
   let ( => ) =
     [%test_eq:
-      ((Base.int * Base.string) Base.option, Base.string) Base.Result.t]
+      ( (Base.int * Base.string * Base.string) Base.option,
+        Base.string )
+      Base.Result.t]
   in
   let prom =
     let open Lwt_result.Syntax in
@@ -42,7 +44,9 @@ let%test_unit "find_by_id: not found" =
 let%test_unit "find_by_id: found" =
   let ( => ) =
     [%test_eq:
-      ((Base.int * Base.string) Base.option, Base.string) Base.Result.t]
+      ( (Base.int * Base.string * Base.string) Base.option,
+        Base.string )
+      Base.Result.t]
   in
   let prom =
     let open Lwt_result.Syntax in
@@ -53,10 +57,15 @@ let%test_unit "find_by_id: found" =
     in
     Author.find_by_id conn "1"
   in
-  Lwt_main.run (str_error prom) => Ok (Some (1, "John"))
+  Lwt_main.run (str_error prom) => Ok (Some (1, "John", "Doe"))
 
 let%test_unit "read many" =
-  let ( => ) = [%test_eq: (Base.string Base.list, Base.string) Base.Result.t] in
+  let ( => ) =
+    [%test_eq:
+      ( (Base.int * Base.string * Base.string) Base.list,
+        Base.string )
+      Base.Result.t]
+  in
 
   let prom =
     let open Lwt_result.Syntax in
@@ -71,4 +80,4 @@ let%test_unit "read many" =
     in
     Author.ls conn
   in
-  Lwt_main.run (str_error prom) => Ok [ "John"; "Jane" ]
+  Lwt_main.run (str_error prom) => Ok [ (1, "John", "Doe"); (2, "Jane", "Doe") ]

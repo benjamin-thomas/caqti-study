@@ -46,6 +46,17 @@ let print_header str =
   print_string "> ";
   flush Out_channel.stdout
 
+let rec read_attribute name validate =
+  let () = printf "%s: %!" name in
+  let got = read_line () in
+  match validate got with
+  | Error x ->
+      (* Ideally, we would be able to keep any prior user input, but this requires `readline`
+         support which will make the example more complicated than need be. *)
+      printf "Validation error: %s\nStart again (sorry!)\n" x;
+      read_attribute name validate
+  | Ok v -> v
+
 (** It is assumed these command won't fail at runtime, given the fact they've been tested.
     Regardless, we probably don't want to print a specific error message in this context *)
 let run_promise p f =
@@ -53,10 +64,22 @@ let run_promise p f =
   | Error _ -> print_endline "Sorry, something went wrong!"
   | Ok x -> f x
 
+module Validate = struct
+  let len_gte n input =
+    if String.length input >= n then
+      Ok input
+    else
+      Error "Length must be greater than or equal to 3"
+  [@@ocamlformat "disable"]
+end
+
 module Author_REPL = struct
   module Author = Repo.Author
 
-  let print_author (id, first_name) = printf "%d) %s\n%!" id first_name
+  type author = Author.author
+
+  let print_author (id, first_name, last_name) =
+    printf "%d) %s %s\n%!" id first_name last_name
 
   let print_author_opt = function
     | None -> print_endline "Author not found!"
@@ -68,6 +91,11 @@ module Author_REPL = struct
     | None -> []
     | Some str -> String.split_on_char ' ' str
 
+  let read_author () : author =
+    let first_name = read_attribute "First name" (Validate.len_gte 3) in
+    let last_name = read_attribute "Last name" (Validate.len_gte 3) in
+    { first_name; middle_name = None; last_name }
+
   let rec run conn args =
     let again = run conn in
     match args with
@@ -75,10 +103,12 @@ module Author_REPL = struct
         (* Ctrl+D or typed "main" *)
         print_newline ()
     | "ls" :: [] ->
-        run_promise (Author.ls' conn) @@ List.iter print_author;
+        run_promise (Author.ls conn) @@ List.iter print_author;
         again (get_args ())
     | "insert" :: [] ->
-        print_endline "will start author insert mode";
+        let author = read_author () in
+        run_promise (Author.insert' conn author) (fun id ->
+            printf "Insert OK (id=%d)\n" id);
         again (get_args ())
     | [ "find"; id ] ->
         run_promise (Author.find_by_id conn id) print_author_opt;
