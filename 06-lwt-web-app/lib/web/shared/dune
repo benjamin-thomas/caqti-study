@@ -1,0 +1,5 @@
+(library
+ (name shared)
+ (preprocess
+  (pps ppx_yojson_conv))
+ (libraries ppx_yojson_conv))

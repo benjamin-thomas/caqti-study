@@ -11,16 +11,22 @@ module Handler = struct
   module Book = struct
     open Ppx_yojson_conv_lib.Yojson_conv.Primitives
 
-    type book =
+    (* type book =
       { id : int
       ; name : string
       }
-    [@@deriving yojson]
+    [@@deriving yojson] *)
+
+    (* type book = Shared.Entity.book *)
 
     let get_all req =
       let%lwt books = Dream.sql req (or_fail Repo.Book.ls) in
-      let books = List.map (fun (id, name) -> { id; name }) books in
-      let to_json = yojson_of_list yojson_of_book in
+      let to_book (id, name) =
+        (* let open Shared.Entity in *)
+        Shared.Book.{ id; name }
+      in
+      let books = List.map to_book books in
+      let to_json = yojson_of_list Shared.Book.yojson_of_t in
       Dream.json @@ Yojson.Safe.to_string (to_json books)
     ;;
   end
