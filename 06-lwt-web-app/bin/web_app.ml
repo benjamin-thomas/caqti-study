@@ -25,4 +25,4 @@
    [@@ocamlformat "disable"]
    end *)
 
-let () = Web.Init.go ()
+let () = Web_server.Init.go ()

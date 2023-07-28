@@ -1,0 +1,1 @@
+../../../../../../_build/default/06-lwt-web-app/lib/web/front/main.bc.js
