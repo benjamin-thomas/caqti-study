@@ -9,9 +9,19 @@ module Handler = struct
   ;;
 
   module Book = struct
+    open Ppx_yojson_conv_lib.Yojson_conv.Primitives
+
+    type book =
+      { id : int
+      ; name : string
+      }
+    [@@deriving yojson]
+
     let get_all req =
       let%lwt books = Dream.sql req (or_fail Repo.Book.ls) in
-      Dream.html (Printf.sprintf "Books count: %d" (List.length books))
+      let books = List.map (fun (id, name) -> { id; name }) books in
+      let to_json = yojson_of_list yojson_of_book in
+      Dream.json @@ Yojson.Safe.to_string (to_json books)
     ;;
   end
 end

@@ -1,5 +1,5 @@
 (library
  (name web)
  (preprocess
-  (pps lwt_ppx))
- (libraries repo dream))
+  (pps lwt_ppx ppx_yojson_conv))
+ (libraries repo dream ppx_yojson_conv))
