@@ -1,6 +1,13 @@
 module Q = struct
   open Caqti_request.Infix
 
+  let book =
+    let encode Shared.Book.{ id; name } = Ok (id, name) in
+    let decode (id, name) = Ok Shared.Book.{ id; name } in
+    let rep = Caqti_type.(tup2 int string) in
+    Caqti_type.custom ~encode ~decode rep
+  ;;
+
   (*
      Caqti infix operators
 
@@ -15,6 +22,7 @@ module Q = struct
     |}
 
   let ls = Caqti_type.(unit ->* tup2 int string) {|SELECT id, title FROM book|}
+  let ls2 = Caqti_type.(unit ->* book) {|SELECT id, title FROM book|}
 
   let find_by_id =
     Caqti_type.(string ->? tup2 int string) {|SELECT id, title FROM book WHERE id = ?|}
@@ -38,6 +46,7 @@ type book = { title : string }
 
 let count (module Conn : Caqti_lwt.CONNECTION) = Conn.find Q.count ()
 let ls (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls ()
+let ls2 (module Conn : Caqti_lwt.CONNECTION) = Conn.collect_list Q.ls2 ()
 
 (* (module DB) -> (int * string) list Lwt.t *)
 (* let list (module Db : DB) =
