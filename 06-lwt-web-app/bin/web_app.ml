@@ -1,28 +1,19 @@
 (*
    Run with:
-   PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/web_app.exe
-
-   NOTE:
-   Run the "simple" app first to seed the database
+   make -C .. db-reset && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/web_app.exe
 *)
-(*
-   open Printf
 
-   (** It is assumed these command won't fail at runtime, given the fact they've been tested.
-   Regardless, we probably don't want to print a specific error message in this context *)
-   let run_promise p f =
-   match Lwt_main.run p with
-   | Error _ -> print_endline "Sorry, something went wrong!"
-   | Ok x -> f x
-   ;;
-
-   module Validate = struct
-   let len_gte n input =
-   if String.length input >= n then
-   Ok input
-   else
-   Error "Length must be greater than or equal to 3"
-   [@@ocamlformat "disable"]
-   end *)
-
-let () = Web.Init.go ()
+let () =
+  let init =
+    let open Lwt_result.Syntax in
+    let* pool = Repo.Init.make_pool () in
+    let* () = Caqti_lwt.Pool.use Repo.Init.create_tables pool in
+    let* () = Caqti_lwt.Pool.use Repo.Init.seed pool in
+    Lwt.return_ok pool
+  in
+  match Lwt_main.run init with
+  | Error err ->
+    print_endline "Can't start the app! I could not connect to the database!!";
+    prerr_endline (Caqti_error.show err)
+  | Ok pool -> Web.Init.run pool
+;;

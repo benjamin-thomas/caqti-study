@@ -100,3 +100,29 @@ Also check these commands:
 Ensure that the database is running by issuing `make db-status` (refer to the database setup above)
 
 Then run: `PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune build @all @runtest`
+
+
+### FIXME:
+
+Parallel tests seem to cause issues with creating tables.
+I should maybe migrate the tables before launching the tests.
+
+Quick-fix below:
+
+```sh
+dune clean && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune build @all @runtest -j1 && echo OK
+```
+
+### Dune watch alternative
+
+The watch feature goes into an infinite file change detection loop.
+
+Use `git ls-files` if you don't have `rg` (which is a better since it lists un-ignored+un-staged files)
+
+This should do for now:
+
+```
+rg --files | entr -cr bash -c 'PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune build @all @runtest -j1 && echo OK'
+```
+
+This technique also has the advantage of allowing to run binaries or other processes between tests runs (dune watch locks the whole dune process via a lock file).
