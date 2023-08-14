@@ -15,5 +15,5 @@ let () =
   | Error err ->
     print_endline "Can't start the app! I could not connect to the database!!";
     prerr_endline (Caqti_error.show err)
-  | Ok pool -> Web.Init.run pool
+    | Ok pool -> Web_server.Init.go pool
 ;;
