@@ -1,6 +1,10 @@
 (*
-   Run with:
+   Start the API server with:
    make -C .. db-reset && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/web_app.exe
+
+   Start the frontend server with:
+   - cd ./lib/web/front
+   - foreman start -f Procfile.dev
 *)
 
 let () =
@@ -15,5 +19,5 @@ let () =
   | Error err ->
     print_endline "Can't start the app! I could not connect to the database!!";
     prerr_endline (Caqti_error.show err)
-    | Ok pool -> Web_server.Init.go pool
+  | Ok pool -> Web_server.Init.go pool
 ;;
