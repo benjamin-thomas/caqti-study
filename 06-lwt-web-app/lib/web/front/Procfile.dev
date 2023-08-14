@@ -1,0 +1,3 @@
+# foreman start -f Procfile.dev
+web: live-server --no-browser --host=$(hostname -I | awk '{print $1}') --ignorePattern="\/js\/" ./public/ --port=8081
+compile: while true;do echo public/js/main.bc.js | entr bash -c 'touch ./public/index.html';done
