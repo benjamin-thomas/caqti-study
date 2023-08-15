@@ -111,7 +111,9 @@ module Author_REPL = struct
             printf "Insert OK (id=%d)\n" id);
         again (get_args ())
     | [ "find"; id ] ->
-        run_promise (Author.find_by_id conn id) print_author_opt;
+        (match int_of_string_opt id with
+        | Some id -> run_promise (Author.find_by_id conn id) print_author_opt
+        | None -> print_endline "Invalid ID. Usage: find NUMBER");
         again (get_args ())
     | _ ->
         print_endline "Unknown author command or sub-command!";
@@ -146,7 +148,9 @@ module Book_REPL = struct
         print_endline "will start book insert mode";
         again (get_args ())
     | [ "find"; id ] ->
-        run_promise (Book.find_by_id conn id) print_book_opt;
+        (match int_of_string_opt id with
+        | Some id -> run_promise (Book.find_by_id conn id) print_book_opt
+        | None -> print_endline "Invalid ID. Usage: find NUMBER");
         again (get_args ())
     | _ ->
         print_endline "Unknown book command or sub-command!";

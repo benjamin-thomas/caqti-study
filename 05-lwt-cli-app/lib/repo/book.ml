@@ -17,7 +17,7 @@ module Q = struct
   let ls = Caqti_type.(unit ->* tup2 int string) {|SELECT id, title FROM book|}
 
   let find_by_id =
-    Caqti_type.(string ->? tup2 int string)
+    Caqti_type.(int ->? tup2 int string)
       {|SELECT id, title FROM book WHERE id = ?|}
 
   let insert =

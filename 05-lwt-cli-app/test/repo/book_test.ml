@@ -29,7 +29,7 @@ let%test_unit "find_by_id: not found" =
   let prom =
     let open Lwt_result.Syntax in
     let* conn = Setup.fresh_db () in
-    Book.find_by_id conn "1"
+    Book.find_by_id conn 1
   in
   Lwt_main.run (str_error prom) => Ok None
 
@@ -42,7 +42,7 @@ let%test_unit "find_by_id: found" =
     let open Lwt_result.Syntax in
     let* conn = Setup.fresh_db () in
     let* () = Book.insert conn { title = "Real World OCaml" } in
-    Book.find_by_id conn "1"
+    Book.find_by_id conn 1
   in
   Lwt_main.run (str_error prom) => Ok (Some (1, "Real World OCaml"))
 

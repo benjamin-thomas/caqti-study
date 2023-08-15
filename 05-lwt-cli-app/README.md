@@ -1,11 +1,17 @@
 # Lwt CLI app
 
-Now, that we have acquired enough knowledge, we will build the app mentioned in the main `README`. The user will generate `CRUD` queries via a CLI.
+Now, that we have acquired enough knowledge, we will build the app mentioned in the main `README`. The user will generate CRUD queries via a CLI.
 
+In the `async` example, we saw that that `map` = `bind` + `return`.
 
-Let's insist once more about the fact that `map` = `bind` + `return`.
+This general concept is also applicable to `lwt`, so we will make use of it via the `Lwt_result.Syntax` module:
 
-Here's an example of five equivalent functions to illustrate and also show possible syntax variations:
+- `let*` stands for bind
+- `let+` stands for map
+
+> NOTE: learning about `async` isn't required to understand `lwt`, but you may find value in playing with that example, to get the bigger picture.
+
+Here's an example illustrating different syntax variations: we always return a `result` wrapped in a `lwt` promise.
 
 ```ocaml
 module Init = Repo.Init

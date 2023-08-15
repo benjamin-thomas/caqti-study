@@ -37,7 +37,7 @@ let%test_unit "find_by_id: not found" =
   let prom =
     let open Lwt_result.Syntax in
     let* conn = Setup.fresh_db () in
-    Author.find_by_id conn "1"
+    Author.find_by_id conn 1
   in
   Lwt_main.run (str_error prom) => Ok None
 
@@ -55,7 +55,7 @@ let%test_unit "find_by_id: found" =
       Author.insert conn
         { first_name = "John"; middle_name = None; last_name = "Doe" }
     in
-    Author.find_by_id conn "1"
+    Author.find_by_id conn 1
   in
   Lwt_main.run (str_error prom) => Ok (Some (1, "John", "Doe"))
 
