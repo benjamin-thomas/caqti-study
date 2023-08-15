@@ -1,10 +1,18 @@
 (*
-   Start the API server with:
-   make -C .. db-reset && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/web_app.exe
+   Current setup doesn't work too well
+   -----------------------------------
 
+   Terminal 1 (don't use `entr`, I currently get locked up + zombie processes)
+   Start the API server with:
+   - make -C .. db-reset && PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/web_app.exe;sleep 1
+
+   Terminal 2:
    Start the frontend server with:
    - cd ./lib/web/front
    - foreman start -f Procfile.dev
+
+   Terminal 3:
+   rg --files | entr dune build
 *)
 
 let () =

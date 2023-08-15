@@ -1,5 +1,19 @@
+module View = struct
+  open Tyxml.Html
+
+  let hello who =
+    html
+      (head (title (txt "Greetings!")) [])
+      (body [ h1 [ txt "Hello, "; txt who; txt "!" ] ])
+  ;;
+end
+
 module Handler = struct
+  module T = Dream
+
+  let html_to_string html = Format.asprintf "%a" (Tyxml.Html.pp ()) html
   let root _ = Dream.html "Hello, world!"
+  let hello name = Dream.html (html_to_string (View.hello name))
   let echo word = Dream.html (Printf.sprintf "echo is -> %s" word)
 
   (** Conforms to Dream's expectations *)
@@ -61,6 +75,14 @@ let go pool =
   @@ Dream.sql_pool (Repo.Init.get_uri ())
   @@ Dream.router
        [ Dream.get "/" Handler.root
+         (*
+            http://localhost:8080/hello/John
+
+            TODO: redirect if last path char is a slash (it should be stripped)
+         *)
+       ; Dream.get "/hello" (fun _ -> Handler.hello "Anonymous")
+       ; Dream.get "/hello/" (fun _ -> Handler.hello "Anonymous")
+       ; Dream.get "/hello/:name" (fun req -> Handler.hello (Dream.param req "name"))
        ; Dream.get "/books" Handler.Book.get_all
        ; Dream.get "/books2" (Handler.Book.get_all2 pool)
        ; Dream.get "/books3" (Handler.Book.get_all3 pool)
