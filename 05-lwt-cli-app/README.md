@@ -1,6 +1,6 @@
 # Lwt CLI app
 
-Now, that we have acquired enough knowledge, we will build the app mentioned in the main `README`. The user will generate `CRUD` queries via a CLI.
+Now, that we have acquired enough knowledge, we will build the app mentioned in the main `README`. The user will generate CRUD queries via a CLI.
 
 In the `async` example, we saw that that `map` = `bind` + `return`.
 
