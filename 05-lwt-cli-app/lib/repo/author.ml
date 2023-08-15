@@ -25,7 +25,7 @@ module Q = struct
       |}
 
   let find_by_id =
-    Caqti_type.(string ->? tup3 int string string)
+    Caqti_type.(int ->? tup3 int string string)
       {|
        SELECT id, first_name, last_name
        FROM author

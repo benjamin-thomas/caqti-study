@@ -15,26 +15,26 @@ open Lwt_result.Syntax
 
 let will_get_author_v1 () : ('author, 'error) result Lwt.t =
   let* conn = Init.connect () in
-  let* author = Author.find_by_id conn "1" in
+  let* author = Author.find_by_id conn 1 in
   Lwt.return (Ok author)
 
 let will_get_author_v2 () : ('author, 'error) result Lwt.t =
   let* conn = Init.connect () in
-  let* author = Author.find_by_id conn "1" in
+  let* author = Author.find_by_id conn 1 in
   Lwt.return_ok author
 
 let will_get_author_v3 () : ('author, 'error) result Lwt.t =
   let* conn = Init.connect () in
-  Lwt.map (fun author -> author) (Author.find_by_id conn "1")
+  Lwt.map (fun author -> author) (Author.find_by_id conn 1)
 
 let will_get_author_v4 () : ('author, 'error) result Lwt.t =
   let* conn = Init.connect () in
-  let+ author = Author.find_by_id conn "1" in
+  let+ author = Author.find_by_id conn 1 in
   author
 
 let will_get_author_v5 () : ('author, 'error) result Lwt.t =
   let* conn = Init.connect () in
-  Author.find_by_id conn "1"
+  Author.find_by_id conn 1
 ```
 
 ```
