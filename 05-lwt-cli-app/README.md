@@ -46,7 +46,10 @@ let will_get_author_v5 () : ('author, 'error) result Lwt.t =
 ```
 cd ./05-lwt-cli-app
 PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/simple.exe
-PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune dune runtest --watch
+PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune runtest --watch
+
+PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/cli_app.exe
+PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 rlwrap ../_build/default/05-lwt-cli-app/bin/cli_app.exe
 ```
 
 As before, we can fully interact with our app via the REPL
