@@ -37,6 +37,8 @@ depends: [
   "caqti-driver-postgresql"
   "caqti-lwt"
   "caqti-async"
+  "caqti-eio"
+  "eio_main"
   "ppx_rapper"
 
   # Below is for testing only
