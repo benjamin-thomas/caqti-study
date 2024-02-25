@@ -2,6 +2,14 @@
   Run with:
 
     PGHOST=localhost PGDATABASE=caqti_study PGPORT=5433 dune exec ./bin/main.exe
+
+  ---
+
+  In eio, we need to send a "switch" to the callee. This can enable it to do,
+  among other things, resources cleanup, message cancellation, etc.
+
+  Typically, we want to do this right at the start of your application, so not
+  as a library call.
 *)
 
 open Printf
@@ -14,10 +22,11 @@ let () =
   let ( let* ) = Result.bind in
   let program : (data, 'err) result =
     (* We could also use the simpler [Init.with_conn'] function here *)
-    Init.with_conn @@ fun conn ->
-    let* sum = Exec.add conn 1 2 in
-    let* product = Exec.mul conn 3 4 in
-    Ok { sum; product }
+    Eio_main.run
+    @@ Init.with_conn (fun conn ->
+           let* sum = Exec.add 1 2 conn in
+           let* product = Exec.mul 3 4 conn in
+           Ok { sum; product })
   in
   match program with
   | Error e -> failwith (sprintf "Got error! %s" (Caqti_error.show e))

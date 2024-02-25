@@ -25,10 +25,10 @@ end
 
 (* Now we use our query definitions *)
 
-let add (conn : Caqti_eio.connection) a b =
+let add a b (conn : Caqti_eio.connection) =
   (* If you don't understand this line, refer to: study/hello-caqti-blocking/lib/repo/exec.ml *)
   let module Conn = (val conn : Caqti_eio.CONNECTION) in
   Conn.find Q.add (a, b)
   [@@ocamlformat "disable"]
 
-let mul (module Conn : Caqti_eio.CONNECTION) a b = Conn.find Q.mul (a, b)
+let mul a b (module Conn : Caqti_eio.CONNECTION) = Conn.find Q.mul (a, b)

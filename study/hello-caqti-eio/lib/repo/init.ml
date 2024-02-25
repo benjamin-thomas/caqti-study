@@ -15,20 +15,11 @@ let get_uri () =
       Printf.sprintf "postgresql://%s:%s/%s" pg_host pg_port pg_database
   | None -> "postgresql://"
 
-(**
-
-  In eio, we need to send a "switch" to the callee. This can enable it to do,
-  among other things, resources cleanup, message cancellation, etc.
-
-  Thusly, we can't hold on to a connection as we did in the previous projects.
-  For when the switch goes out of scope, the connection becomes stale.
-  So we will instead work with a callback.
-
-  We also use the [:>] operator to force a type coersion between the more
+(*
+  NOTE: We use the [:>] operator to force a type coersion between the more
   general [Eio_unix.Stdenv.base] type, to the more specific (but still
   compatible) [Caqti_eio.stdenv] type.
 *)
-let with_conn f =
+let with_conn f (env : Eio_unix.Stdenv.base) =
   let uri = Uri.of_string @@ get_uri () in
-  Eio_main.run @@ fun env ->
   Caqti_eio_unix.with_connection uri ~stdenv:(env :> Caqti_eio.stdenv) f

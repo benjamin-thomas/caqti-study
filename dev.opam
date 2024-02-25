@@ -45,6 +45,7 @@ depends: [
   "base"
   "ppx_assert"
   "ppx_inline_test"
+  "utop"
 
   # Below is for documentation purposes
   "mdx"

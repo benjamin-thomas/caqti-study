@@ -8,7 +8,18 @@
 let%test_unit "PostgreSQL: add (asynchronously)" =
   let ( => ) = [%test_eq: (Base.int, Base.string) Base.Result.t] in
   let will_add a b =
-    Repo.Init.with_conn (fun conn -> Repo.Exec.add conn a b)
+    Eio_main.run @@ Repo.Init.with_conn (Repo.Exec.add a b)
+    |> Result.map_error Caqti_error.show
+  in
+  will_add 1 2 => Ok 3;
+  will_add 2 3 => Ok 5;
+  ()
+
+let%test_unit "PostgreSQL: add (asynchronously) -- fully expanded version" =
+  let ( => ) = [%test_eq: (Base.int, Base.string) Base.Result.t] in
+  let will_add a b =
+    Eio_main.run @@ fun env ->
+    Repo.Init.with_conn (fun conn -> Repo.Exec.add a b conn) env
     |> Result.map_error Caqti_error.show
   in
   will_add 1 2 => Ok 3;
@@ -18,7 +29,7 @@ let%test_unit "PostgreSQL: add (asynchronously)" =
 let%test_unit "PostgreSQL: multiply (asynchronously)" =
   let ( => ) = [%test_eq: (Base.int, Base.string) Base.Result.t] in
   let will_mul a b =
-    Repo.Init.with_conn (fun conn -> Repo.Exec.mul conn a b)
+    Eio_main.run @@ Repo.Init.with_conn (Repo.Exec.mul a b)
     |> Result.map_error Caqti_error.show
   in
   will_mul 2 3 => Ok 6;
