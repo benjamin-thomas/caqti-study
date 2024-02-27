@@ -1,3 +1,5 @@
 (executable
  (name bikereg)
  (libraries caqti-eio.unix eio_main caqti-driver-postgresql))
+
+(mdx)
