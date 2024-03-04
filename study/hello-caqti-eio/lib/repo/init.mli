@@ -1,13 +1,16 @@
+val get_uri : unit -> string
+
 val with_conn :
   (Caqti_eio.connection ->
   ('a, ([> Caqti_error.load_or_connect ] as 'e)) result) ->
-  Eio_unix.Stdenv.base ->
+  stdenv:Caqti_eio.stdenv ->
   ('a, 'e) result
-(** [with_conn f env] runs [f] with the given eio environment.
+(** [with_conn f ~stdenv] runs [f] with the given [stdenv].
 
-    Example:
+    Examples:
     {[
-      with_conn (fun conn -> Repo.Exec.add 1 2 conn) env
+      with_conn ~stdenv (fun conn -> Repo.Exec.add 1 2 conn)
+      with_conn ~stdenv (Repo.Exec.add 1 2)
     ]}
 
 *)

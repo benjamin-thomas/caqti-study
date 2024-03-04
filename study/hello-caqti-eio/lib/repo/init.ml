@@ -15,11 +15,6 @@ let get_uri () =
       Printf.sprintf "postgresql://%s:%s/%s" pg_host pg_port pg_database
   | None -> "postgresql://"
 
-(*
-  NOTE: We use the [:>] operator to force a type coersion between the more
-  general [Eio_unix.Stdenv.base] type, to the more specific (but still
-  compatible) [Caqti_eio.stdenv] type.
-*)
-let with_conn f (env : Eio_unix.Stdenv.base) =
+let with_conn f ~stdenv =
   let uri = Uri.of_string @@ get_uri () in
-  Caqti_eio_unix.with_connection uri ~stdenv:(env :> Caqti_eio.stdenv) f
+  Caqti_eio_unix.with_connection uri ~stdenv f

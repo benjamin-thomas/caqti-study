@@ -25,27 +25,34 @@ Firstly, let's bring the `Init` and `Exec` modules into scope:
 # open Repo
 ```
 
-Also, we will create this helper function, for demonstration purposes.
+Let's also define a variant of `with_conn` which is fused with Eio_main.run, for convenience when using the toplevel.
 
 ```ocaml
-# let with_conn f = Result.get_ok @@ Eio_main.run @@ Init.with_conn @@ f;;
-val with_conn :
-  (Caqti_eio.connection -> ('a, [> Caqti_error.load_or_connect ]) result) ->
+# let run_with_conn f = Caqti_eio.or_fail @@ Eio_main.run @@ fun env -> Init.with_conn f ~stdenv:(env :> Caqti_eio.stdenv)
+val run_with_conn :
+  (Caqti_eio.connection ->
+   ('a,
+    [< Caqti_error.t
+     > `Connect_failed `Connect_rejected `Load_failed `Load_rejected
+       `Post_connect ])
+   result) ->
   'a = <fun>
 ```
+
+> NOTE: we use the `:>` operator to force a type coercion between the more general `Eio_unix.Stdenv.base` type, to the more specific (but still compatible) `Caqti_eio.stdenv` type.
 
 Now we can query the database!
 
 ```ocaml
-# with_conn @@ Exec.add 1 2;;
+# run_with_conn @@ Exec.add 1 2;;
 - : int = 3
 ```
 
 Note that the functions are rather terse, thanks to currying.
 
-Here's the fully expanded version:
+Here's the fully expanded version for clarity:
 
 ```ocaml
-# Result.get_ok @@ Eio_main.run @@ fun env -> Repo.Init.with_conn (fun conn -> Repo.Exec.add 1 2 conn) env
-- : int = 3
+# Caqti_eio.or_fail @@ Eio_main.run @@ fun env -> Init.with_conn ~stdenv:(env :> Caqti_eio.stdenv) @@ fun conn -> Exec.mul 3 4 conn;;
+- : int = 12
 ```
