@@ -48,8 +48,6 @@ Now we can query the database!
 - : int = 3
 ```
 
-Note that the functions are rather terse, thanks to currying.
-
 Here's the fully expanded version for clarity:
 
 ```ocaml
